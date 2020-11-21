@@ -16,6 +16,7 @@ class App extends Component {
     super(props); 
     this.state = {
       mode:'read',
+      selected_content_id:2,
       subject:{title:'WEB', sub:'world wide web!'},
       welcome:{title:'Welcome', desc:'Hello, React!!'},
       contents:[  //데이터가 여러개일땐 배열로 
@@ -36,17 +37,30 @@ class App extends Component {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
     } else if(this.state.mode === 'read') {
-      _title = this.state.contents[0].title;
-      _desc = this.state.contents[0].desc;
+      var i = 0;
+      while(i < this.state.contents.length){  
+        var data = this.state.contents[i];  //현재 순번에 해당되는 contents
+        if(data.id === this.state.selected_content_id) {
+          _title = data.title;
+          _desc = data.desc;
+          break;
+        }
+        i = i + 1;
+      }
+
     }
     console.log('render',this);
     return(
       <div className="App"> 
-        {/* <Subject 
+        <Subject 
           title={this.state.subject.title}
-          sub={this.state.subject.sub}>
-        </Subject> */}
-        <header>
+          sub={this.state.subject.sub}
+          onChangePage={function(){
+            this.setState({mode:'welcome'});
+          }.bind(this)}
+        >
+        </Subject>
+        {/* <header>  위에꺼랑 똑같은거임
           <h1><a href="/" onClick={function(e){
             console.log(e);
             //debugger;
@@ -58,8 +72,16 @@ class App extends Component {
         }.bind(this)}>  
         {this.state.subject.title}</a></h1>
         {this.state.subject.sub}  
-        </header>
-        <TOC data={this.state.contents}></TOC>
+        </header> */}
+        <TOC 
+        onChangePage={function(id){
+          this.setState({
+            mode:'read',
+            selected_content_id:Number(id)
+          });
+        }.bind(this)} 
+        data={this.state.contents}
+        ></TOC>
         <Content title={_title} desc={_desc}></Content>
       </div>
     );
